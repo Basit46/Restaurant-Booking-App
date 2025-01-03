@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.gradient {
+  background-color: red;
+}
+
+@layer components {
+  .label {
+    @apply mt-[10px] text-[#161616] font-sora600;
+  }
+  .input-style {
+    @apply mt-[5px] h-[52px] px-[10px] border border-[#E8E8E8] rounded-[4px] font-sora;
+  }
+  .input-val {
+    @apply mt-[3px] font-sora600 text-[#949494];
+  }
+}
