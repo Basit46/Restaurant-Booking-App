@@ -17,6 +17,8 @@ import BookPlace from "./screens/BookPlace";
 import Preview from "./screens/Preview";
 import GlobalProvider from "./context/globalContext";
 import User from "./screens/User";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -122,61 +124,63 @@ export default function App() {
   }
 
   return (
-    <GlobalProvider>
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            headerShown: false,
+    <Provider store={store}>
+      <GlobalProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              headerShown: false,
 
-            tabBarActiveTintColor: "#380C72",
-            tabBarInactiveTintColor: "#949494",
-            tabBarStyle: {
-              // display: "none",
-              backgroundColor: "white",
-              elevation: 0,
-              shadowOpacity: 0,
-              borderTopWidth: 0,
-            },
-          })}
-        >
-          <Tab.Screen
-            name="Home"
-            component={StackNavigator}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <AntDesign name="home" size={24} color={color} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Explore"
-            component={ExploreStackNavigator}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <FontAwesome6 name="wpexplorer" size={24} color={color} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Search"
-            component={SearchStackNavigator}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <Feather name="search" size={24} color={color} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="User"
-            component={User}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <AntDesign name="user" size={24} color={color} />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </GlobalProvider>
+              tabBarActiveTintColor: "#380C72",
+              tabBarInactiveTintColor: "#949494",
+              tabBarStyle: {
+                // display: "none",
+                backgroundColor: "white",
+                elevation: 0,
+                shadowOpacity: 0,
+                borderTopWidth: 0,
+              },
+            })}
+          >
+            <Tab.Screen
+              name="Home"
+              component={StackNavigator}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <AntDesign name="home" size={24} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Explore"
+              component={ExploreStackNavigator}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <FontAwesome6 name="wpexplorer" size={24} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Search"
+              component={SearchStackNavigator}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <Feather name="search" size={24} color={color} />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="User"
+              component={User}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <AntDesign name="user" size={24} color={color} />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </GlobalProvider>
+    </Provider>
   );
 }

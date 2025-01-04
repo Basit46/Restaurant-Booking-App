@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar as TopBar } from "expo-status-bar";
 import {
+  Alert,
   Dimensions,
   Image,
   Platform,
@@ -15,11 +16,42 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useDispatch, useSelector } from "react-redux";
+import { addUserDetails } from "../reducers/BookingsSlice";
 
 const { width } = Dimensions.get("window");
 
 const BookPlace = ({ navigation, route }) => {
   const { place } = route.params;
+
+  const { date, guests } = useSelector((state) => state.bookings.bookDetails);
+  const dispatch = useDispatch();
+
+  const [userDetails, setUserDetails] = useState({
+    name: "",
+    email: "",
+    request: "",
+  });
+
+  const handleReserve = () => {
+    // Validation
+    if (!userDetails.name.trim()) {
+      Alert.alert("Validation Error", "Name is required.");
+      return;
+    }
+    if (!userDetails.email.trim()) {
+      Alert.alert("Validation Error", "Email is required.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userDetails.email)) {
+      Alert.alert("Validation Error", "Please enter a valid email address.");
+      return;
+    }
+
+    dispatch(addUserDetails(userDetails));
+    navigation.navigate("Preview", { place });
+  };
 
   return (
     <SafeAreaView
@@ -37,7 +69,7 @@ const BookPlace = ({ navigation, route }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="left" size={28} color="black" />
           </TouchableOpacity>
-          <Text className="text-[26px] font-sora700">Reservation Preview</Text>
+          <Text className="text-[26px] font-sora700">Confirm Booking</Text>
           <Text className="font-sora text-[#646464]">
             Confirm if there are errors in the entered details.
           </Text>
@@ -62,9 +94,17 @@ const BookPlace = ({ navigation, route }) => {
               </View>
               <View className="pb-[10px] mt-auto flex-row items-center gap-[5px]">
                 <FontAwesome name="users" size={20} color="#646464" />
-                <Text className="mr-[10px] text-[#646464]">2 Guests</Text>
+                <Text className="mr-[10px] text-[#646464]">
+                  {guests} Guest{guests > 1 && "s"}
+                </Text>
                 <FontAwesome name="calendar" size={20} color="#646464" />
-                <Text className="text-[#646464]">Wed, July 18</Text>
+                <Text className="text-[#646464]">
+                  {new Intl.DateTimeFormat("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  }).format(date)}
+                </Text>
               </View>
             </View>
           </View>
@@ -80,6 +120,10 @@ const BookPlace = ({ navigation, route }) => {
             className="input-style"
             placeholder="Enter your full name"
             placeholderTextColor="#B3B3B3"
+            value={userDetails.name}
+            onChangeText={(value) =>
+              setUserDetails({ ...userDetails, name: value })
+            }
           />
 
           <Text className="label">Email Address</Text>
@@ -90,15 +134,10 @@ const BookPlace = ({ navigation, route }) => {
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
-          />
-
-          <Text className="label">Phone Number</Text>
-          <TextInput
-            className="input-style"
-            placeholder="Enter your Phone Number"
-            placeholderTextColor="#B3B3B3"
-            keyboardType="numeric"
-            autoCorrect={false}
+            value={userDetails.email}
+            onChangeText={(value) =>
+              setUserDetails({ ...userDetails, email: value })
+            }
           />
 
           <Text className="label">Add a Special Request (Optional)</Text>
@@ -112,6 +151,10 @@ const BookPlace = ({ navigation, route }) => {
             multiline={true}
             style={{ height: 150 }}
             textAlignVertical="top"
+            value={userDetails.request}
+            onChangeText={(value) =>
+              setUserDetails({ ...userDetails, request: value })
+            }
           />
 
           <Text className="mt-[15px] font-sora">
@@ -120,9 +163,7 @@ const BookPlace = ({ navigation, route }) => {
             <Text className="text-[#380C72]">Privacy Policy</Text>.
           </Text>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Preview", { place })}
-          >
+          <TouchableOpacity onPress={handleReserve}>
             <View className="mt-[15px] bg-[#380C72] h-[60px] justify-center items-center rounded-[4px]">
               <Text className="text-[18px] font-sora700 text-white">
                 Reserve Now

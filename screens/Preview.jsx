@@ -16,19 +16,25 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { addPlace } from "../reducers/BookingsSlice";
 
 const { width } = Dimensions.get("window");
 
 const Preview = ({ navigation, route }) => {
   const { place } = route.params;
+  const { user, bookDetails } = useSelector((state) => state.bookings);
+  const dispatch = useDispatch();
 
   const bottomSheetRef = useRef(null);
-
   const handleSheetChanges = useCallback((index) => {
     console.log("handleSheetChanges", index);
   }, []);
 
-  const handleBooking = () => {};
+  const handleBooking = () => {
+    dispatch(addPlace({ ...place, ...bookDetails }));
+    navigation.navigate("User");
+  };
 
   return (
     <GestureHandlerRootView style={{ backgroundColor: "blue", flex: 1 }}>
@@ -74,9 +80,18 @@ const Preview = ({ navigation, route }) => {
                 </View>
                 <View className="pb-[10px] mt-auto flex-row items-center gap-[5px]">
                   <FontAwesome name="users" size={20} color="#646464" />
-                  <Text className="mr-[10px] text-[#646464]">2 Guests</Text>
+                  <Text className="mr-[10px] text-[#646464]">
+                    {bookDetails.guests} Guest{bookDetails.guests > 1 && "s"}
+                  </Text>
                   <FontAwesome name="calendar" size={20} color="#646464" />
-                  <Text className="text-[#646464]">Wed, July 18</Text>
+                  <Text className="text-[#646464]">
+                    {" "}
+                    {new Intl.DateTimeFormat("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    }).format(bookDetails.date)}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -88,19 +103,13 @@ const Preview = ({ navigation, route }) => {
             </Text>
 
             <Text className="label">Full Name</Text>
-            <Text className="input-val">Hassan Basit</Text>
+            <Text className="input-val">{user.name}</Text>
 
             <Text className="label">Email Address</Text>
-            <Text className="input-val">Hassan Basit</Text>
-
-            <Text className="label">Phone Number</Text>
-            <Text className="input-val">Hassan Basit</Text>
+            <Text className="input-val">{user.email}</Text>
 
             <Text className="label">Add a Special Request</Text>
-            <Text className="input-val">
-              Please, I do not want a seat close to an Air-Conditioner if you
-              have any as I have friends who are allergic to cold.
-            </Text>
+            <Text className="input-val">{user.request}</Text>
 
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <View className="mt-[30px] border-[2px] border-[#380C72] h-[60px] justify-center items-center rounded-[4px]">
