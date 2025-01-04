@@ -20,6 +20,7 @@ import RNPickerSelect from "react-native-picker-select";
 import BackButton from "../components/BackButton";
 import { useDispatch } from "react-redux";
 import { addDetails } from "../reducers/BookingsSlice";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const { width } = Dimensions.get("window");
 
@@ -27,7 +28,26 @@ const PlaceDetails = ({ navigation, route }) => {
   const { place } = route.params;
   const dispatch = useDispatch();
 
-  const [selectedValue, setSelectedValue] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const [show, setShow] = useState(false);
+  const [mode, setMode] = useState("date"); // 'date' or 'time'
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(false);
+
+    if (mode == "date") {
+      setDate(currentDate);
+      return;
+    }
+    setTime(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
 
   const [guests, setGuests] = useState("");
 
@@ -36,8 +56,17 @@ const PlaceDetails = ({ navigation, route }) => {
       dispatch(
         addDetails({
           guests,
-          date: new Date(),
-          time: new Date().toLocaleTimeString(),
+
+          date: new Intl.DateTimeFormat("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }).format(date),
+          time: time.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true, // AM/PM format
+          }),
         })
       );
       navigation.navigate("BookPlace", { navigation, place });
@@ -97,24 +126,36 @@ const PlaceDetails = ({ navigation, route }) => {
               maxLength={1}
             />
           </View>
-          <View className="w-full h-[45px] border border-[#646464] flex-row items-center px-[10px] gap-[5px]">
-            <FontAwesome name="calendar" size={20} color="#292D32" />
-            <TextInput
-              className="flex-1"
-              placeholder="Date"
-              placeholderTextColor="#B3B3B3"
-              keyboardType="numeric"
+          <TouchableOpacity onPress={() => showMode("date")} title="Pick Date">
+            <View className="w-full h-[45px] border border-[#646464] flex-row items-center px-[10px] gap-[5px]">
+              <FontAwesome name="calendar" size={20} color="#292D32" />
+              <Text>
+                {new Intl.DateTimeFormat("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                }).format(date)}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => showMode("time")} title="Pick Time">
+            <View className="w-full h-[45px] border border-[#646464] flex-row items-center px-[10px] gap-[5px]">
+              <FontAwesome name="calendar" size={20} color="#292D32" />
+              <Text>{time.toLocaleTimeString()}</Text>
+            </View>
+          </TouchableOpacity>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display={Platform.OS === "ios" ? "spinner" : "default"}
+              onChange={onChange}
+              style={{ marginHorizontal: "auto" }}
             />
-          </View>
-          <View className="w-full h-[45px] border border-[#646464] flex-row items-center px-[10px] gap-[5px]">
-            <FontAwesome name="users" size={20} color="#292D32" />
-            <TextInput
-              className="flex-1"
-              placeholder="Time"
-              placeholderTextColor="#B3B3B3"
-              keyboardType="numeric"
-            />
-          </View>
+          )}
         </View>
 
         <TouchableOpacity onPress={handleProceed}>

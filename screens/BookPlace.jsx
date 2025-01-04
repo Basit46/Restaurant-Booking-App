@@ -98,13 +98,7 @@ const BookPlace = ({ navigation, route }) => {
                   {guests} Guest{guests > 1 && "s"}
                 </Text>
                 <FontAwesome name="calendar" size={20} color="#646464" />
-                <Text className="text-[#646464]">
-                  {new Intl.DateTimeFormat("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  }).format(date)}
-                </Text>
+                <Text className="text-[#646464]">{date}</Text>
               </View>
             </View>
           </View>

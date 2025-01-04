@@ -13,8 +13,8 @@ const initialState = {
       website: "https://primecutsteakhouse.com",
       price: 450,
       guests: 3,
-      date: new Date(),
-      time: new Date().toLocaleTimeString(),
+      date: "Fri, Mar 4",
+      time: "4:00 PM",
     },
   ],
   user: {

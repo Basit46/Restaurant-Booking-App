@@ -75,12 +75,7 @@ const User = () => {
                   </Text>
                   <FontAwesome name="calendar" size={20} color="#646464" />
                   <Text className="text-[#646464]">
-                    {new Intl.DateTimeFormat("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    }).format(place.date)}{" "}
-                    - {place.time}
+                    {place.date} - {place.time}
                   </Text>
                 </View>
               </View>
