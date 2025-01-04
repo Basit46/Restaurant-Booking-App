@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Platform,
@@ -16,6 +16,9 @@ import { useGlobal } from "../context/globalContext";
 
 const Home = ({ navigation }) => {
   const { places } = useGlobal();
+
+  const [points, setPoints] = useState(850);
+  const [disabled, setDisabled] = useState(false);
 
   return (
     <SafeAreaView
@@ -60,7 +63,7 @@ const Home = ({ navigation }) => {
                 }}
               />
               <Text style={{ color: "white", fontFamily: "Sora" }}>
-                850 points
+                {points} points
               </Text>
             </LinearGradient>
           </View>
@@ -81,7 +84,7 @@ const Home = ({ navigation }) => {
                 Loyalty Points
               </Text>
               <Text className="text-[36px] font-sora700 text-white">
-                850 <Text className="text-[18px]">Pts</Text>
+                {points} <Text className="text-[18px]">Pts</Text>
               </Text>
             </View>
             <Image
@@ -98,12 +101,19 @@ const Home = ({ navigation }) => {
               <Text className="text-[18px] font-sora700 text-white">
                 Free 50 Points
               </Text>
-              <Text className="text-[12px] text-[#EBE7F1] font-sora">
-                Time Remaining: 10:02:33
-              </Text>
             </View>
-            <TouchableOpacity>
-              <View className="w-[92px] h-[41px] bg-white rounded-[4px] flex justify-center items-center">
+            <TouchableOpacity
+              disabled={disabled}
+              onPress={() => {
+                setPoints((prev) => prev + 50);
+                setDisabled(true);
+              }}
+            >
+              <View
+                className={`${
+                  disabled && "bg-gray-500"
+                } w-[92px] h-[41px] bg-white rounded-[4px] flex justify-center items-center`}
+              >
                 <Text className="text-[#380C72] text-center font-sora">
                   Claim
                 </Text>
